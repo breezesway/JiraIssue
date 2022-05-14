@@ -1,6 +1,7 @@
 package com.cgz.test;
 
-import com.cgz.request.jql.AutoCompleteDataAPI;
+import com.cgz.bean.issue.Issue;
+import com.cgz.request.issue.IssueAPI;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
 import java.sql.SQLException;
@@ -14,6 +15,7 @@ import java.util.List;
 
 public class Test {
     public static void main(String[] args) throws UnirestException, SQLException {
-        List<Object> autoCompleteData = AutoCompleteDataAPI.getAutoCompleteData();
+        Issue issue = IssueAPI.getIssue("ACCUMULO-4677");
+        System.out.println(issue.getSummary());
     }
 }

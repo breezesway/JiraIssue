@@ -2,13 +2,12 @@ package com.cgz.request.metadata;
 
 import com.alibaba.fastjson.JSONObject;
 import com.cgz.bean.metadata.IssueField;
-import com.cgz.bean.metadata.Resolution;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
 import java.util.List;
 
-public class IssueFiledAPI {
+public class IssueFieldAPI {
     public static List<IssueField> getIssueFields() throws UnirestException {
         String body = Unirest.get("https://issues.apache.org/jira/rest/api/2/field")
                 .header("Accept", "application/json")
