@@ -9,7 +9,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class PriorityDao {
-    public static void insertPriority(List<Priority> priorities) throws SQLException {
+    public void insertPriority(List<Priority> priorities) throws SQLException {
         DruidPooledConnection conn = Database.getConnection();
         String sql="insert into priority(id,name,description,statusColor,self,iconUrl) values(?,?,?,?,?,?)";
         PreparedStatement pstmt = conn.prepareStatement(sql);

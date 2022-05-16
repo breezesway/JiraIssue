@@ -9,9 +9,9 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class AttachmentDao {
-    public static void insertAttachments(List<Attachment> attachments) throws SQLException {
+    public void insertAttachments(List<Attachment> attachments) throws SQLException {
         DruidPooledConnection conn = Database.getConnection();
-        String sql="insert into attachment values(?,?,?,?,?,?,?,?)";
+        String sql="replace into attachment values(?,?,?,?,?,?,?,?)";
         PreparedStatement pstmt = conn.prepareStatement(sql);
         for(Attachment attachment:attachments){
             pstmt.setObject(1,attachment.getId());

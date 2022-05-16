@@ -10,7 +10,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class ComponentDao {
-    public static void insertComponents(List<Component> components) throws SQLException {
+    public void insertComponents(List<Component> components) throws SQLException {
         DruidPooledConnection conn = Database.getConnection();
         String sql="insert into component values(?,?,?,?,?,?,?,?,?,?,?)";
         PreparedStatement pstmt = conn.prepareStatement(sql);

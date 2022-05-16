@@ -9,7 +9,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class ProjectTypeDao {
-    public static void insertProjectTypes(List<ProjectType> projectTypes) throws SQLException {
+    public void insertProjectTypes(List<ProjectType> projectTypes) throws SQLException {
         DruidPooledConnection conn = Database.getConnection();
         String sql="insert into projecttype values(?,?,?,?,?)";
         PreparedStatement pstmt = conn.prepareStatement(sql);

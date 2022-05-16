@@ -9,7 +9,7 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import java.util.List;
 
 public class VersionAPI {
-    public static List<Version> getVersions(String projectKey) throws UnirestException {
+    public List<Version> getVersions(String projectKey) throws UnirestException {
         String url = "https://issues.apache.org/jira/rest/api/2/project/"+projectKey+"/versions";
         String body = Unirest.get(url)
                 .header("Accept", "application/json")

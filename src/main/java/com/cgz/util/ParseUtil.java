@@ -8,7 +8,6 @@ import com.cgz.bean.project.Version;
 import com.cgz.bean.user.User;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class ParseUtil {
@@ -45,8 +44,25 @@ public class ParseUtil {
         issue.setTimeOriginalEstimate(fields.getIntValue("timeoriginalestimate"));
         issue.setTimeSpent(fields.getIntValue("timespent"));
         issue.setAggregateTimeSpent(fields.getIntValue("aggregatetimespent"));
-        issue.setAggregateProgress(fields.getJSONObject("aggregateprogress").toJavaObject(Issue.Progress.class));
-        issue.setProgress(fields.getJSONObject("progress").toJavaObject(Issue.Progress.class));
+
+        Issue.Progress aggregateProgress = issue.new Progress();
+        aggregateProgress.setProgress((int)fields.getJSONObject("aggregateprogress").get("progress"));
+        aggregateProgress.setTotal((int)fields.getJSONObject("aggregateprogress").get("total"));
+        aggregateProgress.setPercent((float)fields.getJSONObject("aggregateprogress").getIntValue("percent"));
+        issue.setAggregateProgress(aggregateProgress);
+
+        Issue.Progress progress = issue.new Progress();
+        progress.setProgress((int)fields.getJSONObject("aggregateprogress").get("progress"));
+        progress.setTotal((int)fields.getJSONObject("aggregateprogress").get("total"));
+        progress.setPercent((float)fields.getJSONObject("aggregateprogress").getIntValue("percent"));
+        issue.setProgress(progress);
+
+        Issue.TimeTracking timeTracking = issue.new TimeTracking();
+        timeTracking.setRemainingEstimate(fields.getJSONObject("timetracking").getString("remainingEstimate"));
+        timeTracking.setTimeSpent(fields.getJSONObject("timetracking").getString("timeSpent"));
+        timeTracking.setRemainingEstimateSeconds(fields.getJSONObject("timetracking").getIntValue("remainingEstimateSeconds"));
+        timeTracking.setTimeSpentSeconds(fields.getJSONObject("timetracking").getIntValue("timeSpentSeconds"));
+        issue.setTimetracking(timeTracking);
 
         ArrayList<String> labels = new ArrayList<>();
         for (Object object:fields.getJSONArray("labels")){

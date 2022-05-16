@@ -10,7 +10,7 @@ import java.util.List;
 
 public class DashboardAPI {
 
-    public static List<Dashboard> getDashboards() throws UnirestException {
+    public List<Dashboard> getDashboards() throws UnirestException {
         String body = Unirest.get("https://issues.apache.org/jira/rest/api/2/dashboard")
                 .header("Accept", "application/json")
                 .queryString("maxResults",10000)

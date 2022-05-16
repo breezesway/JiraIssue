@@ -9,7 +9,7 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import java.util.List;
 
 public class RemoteLinkAPI {
-    public static List<RemoteLink> getRemoteLinks(String issueKey) throws UnirestException {
+    public List<RemoteLink> getRemoteLinks(String issueKey) throws UnirestException {
         String url = "https://issues.apache.org/jira/rest/api/2/issue/"+issueKey+"/remotelink";
         String body = Unirest.get(url)
                 .header("Accept", "application/json")

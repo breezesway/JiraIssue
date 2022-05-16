@@ -9,7 +9,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class DashboardDao {
-    public static void insertDashboards(List<Dashboard> dashboards) throws SQLException {
+    public void insertDashboards(List<Dashboard> dashboards) throws SQLException {
         DruidPooledConnection conn = Database.getConnection();
         String sql="insert into dashboard(id,name,self,view) values(?,?,?,?)";
         PreparedStatement pstmt = conn.prepareStatement(sql);

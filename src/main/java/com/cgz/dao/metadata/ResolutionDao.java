@@ -9,7 +9,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class ResolutionDao {
-    public static void insertResolutions(List<Resolution> resolutions) throws SQLException {
+    public void insertResolutions(List<Resolution> resolutions) throws SQLException {
         DruidPooledConnection conn = Database.getConnection();
         String sql="insert into resolution(id,name,description,self) values(?,?,?,?)";
         PreparedStatement pstmt = conn.prepareStatement(sql);

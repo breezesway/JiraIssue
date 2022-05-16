@@ -9,7 +9,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class IssueTypeDao {
-    public static void insertIssueTypes(List<IssueType> issueTypes) throws SQLException {
+    public void insertIssueTypes(List<IssueType> issueTypes) throws SQLException {
         DruidPooledConnection conn = Database.getConnection();
         String sql="insert into issuetype(id,name,description,subtask,avatarId,self,iconUrl) values(?,?,?,?,?,?,?)";
         PreparedStatement pstmt = conn.prepareStatement(sql);

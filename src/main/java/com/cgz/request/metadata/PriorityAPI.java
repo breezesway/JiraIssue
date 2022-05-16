@@ -8,7 +8,7 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import java.util.List;
 
 public class PriorityAPI {
-    public static List<Priority> getPriorities() throws UnirestException {
+    public List<Priority> getPriorities() throws UnirestException {
         String body = Unirest.get("https://issues.apache.org/jira/rest/api/2/priority")
                 .header("Accept", "application/json")
                 .asString()

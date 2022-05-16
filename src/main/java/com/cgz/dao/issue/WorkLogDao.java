@@ -10,9 +10,9 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class WorkLogDao {
-    public static void insertWorkLogs(List<WorkLog> workLogs) throws SQLException {
+    public void insertWorkLogs(List<WorkLog> workLogs) throws SQLException {
         DruidPooledConnection conn = Database.getConnection();
-        String sql="insert into worklog values(?,?,?,?,?,?,?,?,?,?,?,?)";
+        String sql="replace into worklog values(?,?,?,?,?,?,?,?,?,?,?,?)";
         PreparedStatement pstmt = conn.prepareStatement(sql);
         for(WorkLog workLog:workLogs){
             pstmt.setObject(1,workLog.getId());

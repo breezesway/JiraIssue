@@ -8,7 +8,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class JqlReservedWordDao {
-    public static void insertVisibleFunctionName(List<String> jqlReservedWords) throws SQLException {
+    public void insertVisibleFunctionName(List<String> jqlReservedWords) throws SQLException {
         DruidPooledConnection conn = Database.getConnection();
         String sql="insert into jqlreservedword values(?)";
         PreparedStatement pstmt = conn.prepareStatement(sql);

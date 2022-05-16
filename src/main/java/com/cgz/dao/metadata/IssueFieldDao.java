@@ -10,7 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class IssueFieldDao {
-    public static void insertIssueFields(List<IssueField> issueFields) throws SQLException {
+    public void insertIssueFields(List<IssueField> issueFields) throws SQLException {
         DruidPooledConnection conn = Database.getConnection();
         String sql="insert into issuefield values(?,?,?,?,?,?,?,?,?,?,?)";
         PreparedStatement pstmt = conn.prepareStatement(sql);

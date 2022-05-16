@@ -10,7 +10,7 @@ import java.util.List;
 
 public class IssueTypeAPI {
 
-    public static List<IssueType> getIssueTypes() throws UnirestException {
+    public List<IssueType> getIssueTypes() throws UnirestException {
         String body = Unirest.get("https://issues.apache.org/jira/rest/api/2/issuetype")
                 .header("Accept", "application/json")
                 .asString()

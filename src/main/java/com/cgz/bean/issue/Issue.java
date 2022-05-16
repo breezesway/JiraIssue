@@ -41,8 +41,8 @@ public class Issue {
     private Progress progress;  //进度
     @Data
     public class Progress {
-        private long progress;
-        private long total;
+        private int progress;
+        private int total;
         private float percent;
     }
     private TimeTracking timetracking;  //时间追踪吗？，具体含义可查询issuefield表了解
@@ -50,8 +50,8 @@ public class Issue {
     public class TimeTracking{
         private String remainingEstimate;
         private String timeSpent;
-        private long remainingEstimateSeconds;
-        private long timeSpentSeconds;
+        private int remainingEstimateSeconds;
+        private int timeSpentSeconds;
     }
 
     private List<String> labels;   //标签
@@ -59,8 +59,8 @@ public class Issue {
     private List<Version> versions;    //指的是该Issue所经历的版本吗，可查询issuefield表了解
     private List<User> watchers;   //所有的watcher，需访问/issue/{}/watchers接口
     private List<User> voters; //所有的voter，需访问/issue/{}/votes接口
-    private List<Component> components;   //ACCUMULO-3277，ACCUMULO-3513，该issue的component
-    private List<Attachment> attachment;   //ACCUMULO-3513，该issue的补丁
+    private List<Component> components;   //ACCUMULO-3277，ACCUMULO-3513，该issue的component，数据库issue表中只记录其id
+    private List<Attachment> attachment;   //ACCUMULO-3513，该issue的补丁，数据库issue表中只记录其id
 
     private List<String> subtasks;     //ACCUMULO-2171，该issue的subtask，与另一个issue相连，这里只记另一个issue的唯一key，而这又与issuelink有何区别呢?
     private String parent; //与subtask对应，大多数issue没有该字段
@@ -70,6 +70,6 @@ public class Issue {
 
     private List<Comment> comments; //该issue的评论，数据库issue表只记录唯一id，需访问/issue/{}/comment接口
     private List<WorkLog> worklog;  //该issue的worklog，数据库issue表只记录唯一id，需访问/issue/{}/worklog接口
-    private List<History> histories;    //该issue的history，需添加请求参数expand=changelog
+    private List<History> histories;    //该issue的history，数据库issue表只记录唯一id，需添加请求参数expand=changelog
 
 }

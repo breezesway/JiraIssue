@@ -9,7 +9,7 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import java.util.List;
 
 public class IssueLinkTypeAPI {
-    public static List<IssueLinkType> getIssueLinkTypes() throws UnirestException {
+    public List<IssueLinkType> getIssueLinkTypes() throws UnirestException {
         String body = Unirest.get("https://issues.apache.org/jira/rest/api/2/issueLinkType")
                 .header("Accept", "application/json")
                 .asString()

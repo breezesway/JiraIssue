@@ -8,7 +8,7 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import java.util.List;
 
 public class ProjectTypeAPI {
-    public static List<ProjectType> getProjectTypes() throws UnirestException {
+    public List<ProjectType> getProjectTypes() throws UnirestException {
         String body = Unirest.get("https://issues.apache.org/jira/rest/api/2/project/type")
                 .header("Accept", "application/json")
                 .asString()

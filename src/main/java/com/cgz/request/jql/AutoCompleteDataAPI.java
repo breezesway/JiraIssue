@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AutoCompleteDataAPI {
-    public static List<Object> getAutoCompleteData() throws UnirestException {
+    public List<Object> getAutoCompleteData() throws UnirestException {
         String body = Unirest.get("https://issues.apache.org/jira/rest/api/2/jql/autocompletedata")
                 .header("Accept", "application/json")
                 .asString()

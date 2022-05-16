@@ -10,7 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class VisibleFieldNameDao {
-    public static void insertVisibleFieldName(List<VisibleFieldName> visibleFieldNames) throws SQLException {
+    public void insertVisibleFieldName(List<VisibleFieldName> visibleFieldNames) throws SQLException {
         DruidPooledConnection conn = Database.getConnection();
         String sql="insert into visiblefieldname values(?,?,?,?,?,?,?)";
         PreparedStatement pstmt = conn.prepareStatement(sql);

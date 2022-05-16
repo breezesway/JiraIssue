@@ -9,7 +9,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class VersionDao {
-    public static void insertVersions(List<Version> versions) throws SQLException {
+    public void insertVersions(List<Version> versions) throws SQLException {
         DruidPooledConnection conn = Database.getConnection();
         String sql="insert into version values(?,?,?,?,?,?,?,?,?)";
         PreparedStatement pstmt = conn.prepareStatement(sql);

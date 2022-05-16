@@ -9,7 +9,7 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import java.util.List;
 
 public class ComponentAPI {
-    public static List<Component> getComponents(String projectKey) throws UnirestException {
+    public List<Component> getComponents(String projectKey) throws UnirestException {
         String url = "https://issues.apache.org/jira/rest/api/2/project/"+projectKey+"/components";
         String body = Unirest.get(url)
                 .header("Accept", "application/json")

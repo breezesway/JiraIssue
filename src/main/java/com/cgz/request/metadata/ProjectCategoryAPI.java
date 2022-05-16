@@ -8,7 +8,7 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import java.util.List;
 
 public class ProjectCategoryAPI {
-    public static List<ProjectCategory> getProjectCategories() throws UnirestException {
+    public List<ProjectCategory> getProjectCategories() throws UnirestException {
         String body = Unirest.get("https://issues.apache.org/jira/rest/api/2/projectCategory")
                 .header("Accept", "application/json")
                 .asString()

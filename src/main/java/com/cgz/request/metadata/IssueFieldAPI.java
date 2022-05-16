@@ -8,7 +8,7 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import java.util.List;
 
 public class IssueFieldAPI {
-    public static List<IssueField> getIssueFields() throws UnirestException {
+    public List<IssueField> getIssueFields() throws UnirestException {
         String body = Unirest.get("https://issues.apache.org/jira/rest/api/2/field")
                 .header("Accept", "application/json")
                 .asString()

@@ -10,9 +10,9 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class CommentDao {
-    public static void insertComments(List<Comment> comments) throws SQLException {
+    public void insertComments(List<Comment> comments) throws SQLException {
         DruidPooledConnection conn = Database.getConnection();
-        String sql="insert into comment values(?,?,?,?,?,?,?,?)";
+        String sql="replace into comment values(?,?,?,?,?,?,?,?)";
         PreparedStatement pstmt = conn.prepareStatement(sql);
         for(Comment comment:comments){
             pstmt.setObject(1,comment.getId());

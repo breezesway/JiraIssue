@@ -9,7 +9,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class StatusCategoryDao {
-    public static void insertStatusCategories(List<StatusCategory> statusCategories) throws SQLException {
+    public void insertStatusCategories(List<StatusCategory> statusCategories) throws SQLException {
         DruidPooledConnection conn = Database.getConnection();
         String sql="insert into statuscategory values(?,?,?,?,?)";
         PreparedStatement pstmt = conn.prepareStatement(sql);
