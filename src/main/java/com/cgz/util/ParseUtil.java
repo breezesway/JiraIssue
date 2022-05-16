@@ -92,8 +92,7 @@ public class ParseUtil {
         issue.setIssueLinks(issueLinks);
 
         JSONArray historyArray = jsonObject.getJSONObject("changelog").getJSONArray("histories");
-        List<History> histories = historyArray.toJavaList(History.class);
-        issue.setHistories(histories);
+        issue.setHistories(parseHistoryList(historyArray,jsonObject.getString("key")));
 
         return issue;
     }
@@ -156,5 +155,53 @@ public class ParseUtil {
             comment.setIssueKey(issueKey);
         }
         return comments;
+    }
+
+    public static List<History> parseHistoryList(JSONArray jsonArray,String issueKey){
+        ArrayList<History> histories = new ArrayList<>();
+        for (int i=0;i<jsonArray.size();i++){
+            JSONObject jsonObject = jsonArray.getJSONObject(i);
+            History history = new History();
+            history.setId(jsonObject.getString("id"));
+            history.setCreated(jsonObject.getString("created"));
+            history.setIssueKey(issueKey);
+            User user = jsonObject.getJSONObject("author").toJavaObject(User.class);
+            history.setAuthor(user);
+            JSONArray itemsJSONArray = jsonObject.getJSONArray("items");
+            ArrayList<History.Item> items = new ArrayList<>();
+            for (int j=0;j<itemsJSONArray.size();j++){
+                JSONObject itemJSONObject = itemsJSONArray.getJSONObject(j);
+                History.Item item = history.new Item();
+                item.setField(itemJSONObject.getString("field"));
+                item.setFieldtype(itemJSONObject.getString("fieldtype"));
+                item.setFrom(itemJSONObject.getString("from"));
+                item.setFromString(itemJSONObject.getString("fromString"));
+                item.setTo(itemJSONObject.getString("to"));
+                item.setToString(itemJSONObject.getString("toString"));
+                items.add(item);
+            }
+            history.setItems(items);
+            histories.add(history);
+        }
+        return histories;
+    }
+
+    public static List<Transition> parseTransitionList(Issue issue){
+        List<Transition> transitions = new ArrayList<>();
+        List<History> histories = issue.getHistories();
+        for (History history:histories){
+            for (History.Item item:history.getItems()){
+                if("status".equals(item.getField())){
+                    Transition transition = new Transition();
+                    transition.setAuthorDisplayName(history.getAuthor().getDisplayName());
+                    transition.setCreated(history.getCreated());
+                    transition.setIssueKey(history.getIssueKey());
+                    transition.setFromString(item.getFromString());
+                    transition.setToString(item.getToString());
+                    transitions.add(transition);
+                }
+            }
+        }
+        return transitions;
     }
 }
