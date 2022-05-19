@@ -13,6 +13,6 @@ import java.sql.SQLException;
 
 public class Test {
     public static void main(String[] args) throws UnirestException, SQLException {
-        new IssueHandler().insertSingleIssue("ACCUMULO-4854");
+        new IssueHandler(32).insertMutliIssue("AMQ");
     }
 }

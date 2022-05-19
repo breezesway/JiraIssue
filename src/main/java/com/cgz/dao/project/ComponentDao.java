@@ -1,8 +1,7 @@
 package com.cgz.dao.project;
 
 import com.alibaba.druid.pool.DruidPooledConnection;
-import com.cgz.bean.issue.Component;
-import com.cgz.bean.project.Version;
+import com.cgz.bean.project.Component;
 import com.cgz.dao.Database;
 
 import java.sql.PreparedStatement;
@@ -12,7 +11,7 @@ import java.util.List;
 public class ComponentDao {
     public void insertComponents(List<Component> components) throws SQLException {
         DruidPooledConnection conn = Database.getConnection();
-        String sql="insert into component values(?,?,?,?,?,?,?,?,?,?,?)";
+        String sql="replace into component values(?,?,?,?,?,?,?,?,?,?,?)";
         PreparedStatement pstmt = conn.prepareStatement(sql);
         for (Component component:components){
             pstmt.setObject(1,component.getId());

@@ -1,5 +1,6 @@
 package com.cgz.bean.issue;
 
+import com.cgz.bean.project.Component;
 import com.cgz.bean.project.Version;
 import com.cgz.bean.user.User;
 import lombok.Data;
@@ -30,6 +31,8 @@ public class Issue {
     private User assignee;  //该issue分配给的人
     private User creator;   //创建该issue的人
     private User reporter;  //报告该issue的人
+    private int votesCount;   //vote的数量
+    private int watchCount; //watch的数量
 
     private int timeEstimate;   //时间估计
     private int aggregateTimeOriginalEstimate;  //总共时间的原始估计
@@ -57,8 +60,8 @@ public class Issue {
     private List<String> labels;   //标签
     private List<Version> fixVersions; //修复版本
     private List<Version> versions;    //指的是该Issue所经历的版本吗，可查询issuefield表了解
-    private List<User> watchers;   //所有的watcher，需访问/issue/{}/watchers接口
-    private List<User> voters; //所有的voter，需访问/issue/{}/votes接口
+    //private List<User> watchers;   //所有的watcher，需访问/issue/{}/watchers接口
+    //private List<User> voters; //所有的voter，需访问/issue/{}/votes接口
     private List<Component> components;   //ACCUMULO-3277，ACCUMULO-3513，该issue的component，数据库issue表中只记录其id
     private List<Attachment> attachment;   //ACCUMULO-3513，该issue的补丁，数据库issue表中只记录其id
 

@@ -11,6 +11,6 @@ public class Version {
     boolean released;
     String releaseDate;
     String userReleaseDate;
-    long projectId;
+    int projectId;
     String self;
 }

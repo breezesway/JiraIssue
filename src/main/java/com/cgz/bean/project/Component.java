@@ -1,4 +1,4 @@
-package com.cgz.bean.issue;
+package com.cgz.bean.project;
 
 import com.cgz.bean.user.User;
 import lombok.Data;

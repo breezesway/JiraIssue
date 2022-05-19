@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cgz.bean.issue.*;
 import com.cgz.bean.metadata.IssueLinkType;
+import com.cgz.bean.project.Component;
 import com.cgz.bean.project.Version;
 import com.cgz.bean.user.User;
 
@@ -30,13 +31,15 @@ public class ParseUtil {
 
         issue.setPriority((String) fields.getJSONObject("priority").get("name"));
         issue.setStatus((String) fields.getJSONObject("status").get("name"));
-        issue.setResolution((String) fields.getJSONObject("resolution").get("name"));
+        issue.setResolution(fields.containsKey("resolution")?fields.getJSONObject("resolution").getString("name"):null);
         issue.setIssueType((String) fields.getJSONObject("issuetype").get("name"));
         issue.setProject((String) fields.getJSONObject("project").get("key"));
 
-        issue.setAssignee(parseUser(fields.getJSONObject("assignee").toJSONString()));
-        issue.setCreator(parseUser(fields.getJSONObject("creator").toJSONString()));
-        issue.setReporter(parseUser(fields.getJSONObject("reporter").toJSONString()));
+        issue.setAssignee(fields.containsKey("assignee")?parseUser(fields.getJSONObject("assignee").toJSONString()):null);
+        issue.setCreator(fields.containsKey("creator")?parseUser(fields.getJSONObject("creator").toJSONString()):null);
+        issue.setReporter(fields.containsKey("reporter")?parseUser(fields.getJSONObject("reporter").toJSONString()):null);
+        issue.setWatchCount(fields.getJSONObject("watches").getIntValue("watchCount"));
+        issue.setWatchCount(fields.getJSONObject("votes").getIntValue("votes"));
 
         issue.setTimeEstimate(fields.getIntValue("timeestimate"));
         issue.setAggregateTimeOriginalEstimate(fields.getIntValue("aggregatetimeoriginalestimate"));
@@ -46,22 +49,27 @@ public class ParseUtil {
         issue.setAggregateTimeSpent(fields.getIntValue("aggregatetimespent"));
 
         Issue.Progress aggregateProgress = issue.new Progress();
-        aggregateProgress.setProgress((int)fields.getJSONObject("aggregateprogress").get("progress"));
-        aggregateProgress.setTotal((int)fields.getJSONObject("aggregateprogress").get("total"));
-        aggregateProgress.setPercent((float)fields.getJSONObject("aggregateprogress").getIntValue("percent"));
+        JSONObject aggregateprogressJSONObject = fields.getJSONObject("aggregateprogress");
+        aggregateProgress.setProgress((int) aggregateprogressJSONObject.get("progress"));
+        aggregateProgress.setTotal((int) aggregateprogressJSONObject.get("total"));
+        aggregateProgress.setPercent(aggregateprogressJSONObject.containsKey("percent")?(float) aggregateprogressJSONObject.getIntValue("percent"):0);
         issue.setAggregateProgress(aggregateProgress);
 
         Issue.Progress progress = issue.new Progress();
-        progress.setProgress((int)fields.getJSONObject("aggregateprogress").get("progress"));
-        progress.setTotal((int)fields.getJSONObject("aggregateprogress").get("total"));
-        progress.setPercent((float)fields.getJSONObject("aggregateprogress").getIntValue("percent"));
+        JSONObject progressJSONObject = fields.getJSONObject("progress");
+        progress.setProgress((int) progressJSONObject.get("progress"));
+        progress.setTotal((int) progressJSONObject.get("total"));
+        progress.setPercent(progressJSONObject.containsKey("percent")?(float) progressJSONObject.getIntValue("percent"):0);
         issue.setProgress(progress);
 
         Issue.TimeTracking timeTracking = issue.new TimeTracking();
-        timeTracking.setRemainingEstimate(fields.getJSONObject("timetracking").getString("remainingEstimate"));
-        timeTracking.setTimeSpent(fields.getJSONObject("timetracking").getString("timeSpent"));
-        timeTracking.setRemainingEstimateSeconds(fields.getJSONObject("timetracking").getIntValue("remainingEstimateSeconds"));
-        timeTracking.setTimeSpentSeconds(fields.getJSONObject("timetracking").getIntValue("timeSpentSeconds"));
+        if(fields.containsKey("timetracking")) {
+            JSONObject timetrackingJSONObject = fields.getJSONObject("timetracking");
+            timeTracking.setRemainingEstimate(timetrackingJSONObject.getString("remainingEstimate"));
+            timeTracking.setTimeSpent(timetrackingJSONObject.getString("timeSpent"));
+            timeTracking.setRemainingEstimateSeconds(timetrackingJSONObject.getIntValue("remainingEstimateSeconds"));
+            timeTracking.setTimeSpentSeconds(timetrackingJSONObject.getIntValue("timeSpentSeconds"));
+        }
         issue.setTimetracking(timeTracking);
 
         ArrayList<String> labels = new ArrayList<>();
@@ -72,7 +80,7 @@ public class ParseUtil {
         issue.setFixVersions(fields.getJSONArray("fixVersions").toJavaList(Version.class));
         issue.setVersions(fields.getJSONArray("versions").toJavaList(Version.class));
         issue.setComponents(fields.getJSONArray("components").toJavaList(Component.class));
-        issue.setAttachment(fields.getJSONArray("attachment").toJavaList(Attachment.class));
+        issue.setAttachment(fields.containsKey("attachment")?fields.getJSONArray("attachment").toJavaList(Attachment.class):null);
 
         JSONArray jsonArray1 = fields.getJSONArray("subtasks");
         List<String> subtasks = new ArrayList<>();
@@ -95,6 +103,14 @@ public class ParseUtil {
         issue.setHistories(parseHistoryList(historyArray,jsonObject.getString("key")));
 
         return issue;
+    }
+
+    public static List<Issue> parseIssueList(JSONArray jsonArray){
+        ArrayList<Issue> issues = new ArrayList<>();
+        for (int i=0;i<jsonArray.size();i++){
+            issues.add(parseIssue(jsonArray.getJSONObject(i).toJSONString()));
+        }
+        return issues;
     }
 
     public static User parseUser(String body){
@@ -165,8 +181,12 @@ public class ParseUtil {
             history.setId(jsonObject.getString("id"));
             history.setCreated(jsonObject.getString("created"));
             history.setIssueKey(issueKey);
-            User user = jsonObject.getJSONObject("author").toJavaObject(User.class);
-            history.setAuthor(user);
+            if(jsonObject.containsKey("author")) {
+                User user = jsonObject.getJSONObject("author").toJavaObject(User.class);
+                history.setAuthor(user);
+            }else {
+                history.setAuthor(null);
+            }
             JSONArray itemsJSONArray = jsonObject.getJSONArray("items");
             ArrayList<History.Item> items = new ArrayList<>();
             for (int j=0;j<itemsJSONArray.size();j++){
@@ -203,5 +223,14 @@ public class ParseUtil {
             }
         }
         return transitions;
+    }
+
+    public static List<String> parseIssueKeyList(String body){
+        JSONArray issueJSONArray = JSONObject.parseObject(body).getJSONArray("issues");
+        ArrayList<String> issueKeys = new ArrayList<>();
+        for (int i=0;i<issueJSONArray.size();i++){
+            issueKeys.add(issueJSONArray.getJSONObject(i).getString("key"));
+        }
+        return issueKeys;
     }
 }
