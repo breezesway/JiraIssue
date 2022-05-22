@@ -19,7 +19,7 @@ public class Database {
 
         //下面都是可选的配置
         dataSource.setInitialSize(10);  //初始连接数，默认0
-        dataSource.setMaxActive(30);  //最大连接数，默认8
+        dataSource.setMaxActive(20);  //最大连接数，默认8
         dataSource.setMinIdle(10);  //最小闲置数
         dataSource.setMaxWait(2000);  //获取连接的最大等待时间，单位毫秒
         dataSource.setPoolPreparedStatements(true); //缓存PreparedStatement，默认false

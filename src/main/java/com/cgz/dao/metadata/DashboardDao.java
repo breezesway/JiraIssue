@@ -11,7 +11,7 @@ import java.util.List;
 public class DashboardDao {
     public void insertDashboards(List<Dashboard> dashboards) throws SQLException {
         DruidPooledConnection conn = Database.getConnection();
-        String sql="insert into dashboard(id,name,self,view) values(?,?,?,?)";
+        String sql="replace into dashboard(id,name,self,view) values(?,?,?,?)";
         PreparedStatement pstmt = conn.prepareStatement(sql);
         for(Dashboard dashboard:dashboards){
             pstmt.setObject(1,dashboard.getId());

@@ -12,7 +12,7 @@ import java.util.List;
 public class IssueFieldDao {
     public void insertIssueFields(List<IssueField> issueFields) throws SQLException {
         DruidPooledConnection conn = Database.getConnection();
-        String sql="insert into issuefield values(?,?,?,?,?,?,?,?,?,?,?)";
+        String sql="replace into issuefield values(?,?,?,?,?,?,?,?,?,?,?)";
         PreparedStatement pstmt = conn.prepareStatement(sql);
         for(IssueField issueField:issueFields){
             pstmt.setObject(1,issueField.getId());

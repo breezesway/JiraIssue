@@ -15,7 +15,7 @@ public class HistoryDao {
         PreparedStatement pstmt = conn.prepareStatement(sql);
         for(History history:histories){
             pstmt.setObject(1,history.getId());
-            pstmt.setObject(2,history.getAuthor().getDisplayName());
+            pstmt.setObject(2,history.getAuthor()!=null?history.getAuthor().getDisplayName():null);
             pstmt.setObject(3,history.getCreated());
             pstmt.setObject(4,history.getIssueKey());
             pstmt.setObject(5,history.getItems().toString());

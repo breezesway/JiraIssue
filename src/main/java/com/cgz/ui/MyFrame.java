@@ -1,5 +1,6 @@
 package com.cgz.ui;
 
+import com.cgz.handler.IssueHandler;
 import com.cgz.handler.MetaHandler;
 import com.cgz.handler.ProjectHandler;
 import com.mashape.unirest.http.exceptions.UnirestException;
@@ -11,7 +12,7 @@ import java.util.List;
 
 public class MyFrame {
 
-    private JTextArea jTextArea;
+    public JTextArea jTextArea;
 
     public void start() {
         JFrame jf = new JFrame("JiraIssue提取器");          // 创建窗口
@@ -31,15 +32,37 @@ public class MyFrame {
         projectBtn.setLocation(50,100);
         panel.add(projectBtn);
 
-        JButton allIssueBtn = new JButton("获取全部issue");
-        allIssueBtn.setSize(150,40);
-        allIssueBtn.setLocation(300,20);
-        panel.add(allIssueBtn);
-
         JButton projectIssueBtn = new JButton("获取某项目的issue");
         projectIssueBtn.setSize(150,40);
-        projectIssueBtn.setLocation(300,100);
+        projectIssueBtn.setLocation(300,20);
         panel.add(projectIssueBtn);
+
+        JButton allIssueBtn = new JButton("获取issue");
+        allIssueBtn.setSize(150,40);
+        allIssueBtn.setLocation(300,100);
+        panel.add(allIssueBtn);
+
+        JLabel startAtJLabel = new JLabel();
+        startAtJLabel.setSize(200,20);
+        startAtJLabel.setLocation(300,160);
+        startAtJLabel.setText("开始位置(默认从上次位置开始):");
+        panel.add(startAtJLabel);
+
+        JTextField startAtJTextField = new JTextField();
+        startAtJTextField.setSize(100,40);
+        startAtJTextField.setLocation(300,185);
+        panel.add(startAtJTextField);
+
+        JLabel issueCountJLabel = new JLabel();
+        issueCountJLabel.setSize(200,20);
+        issueCountJLabel.setLocation(300,230);
+        issueCountJLabel.setText("要获取的issue数量\n(默认为全部):");
+        panel.add(issueCountJLabel);
+
+        JTextField issueCountJTextField = new JTextField();
+        issueCountJTextField.setSize(100,40);
+        issueCountJTextField.setLocation(300,255);
+        panel.add(issueCountJTextField);
 
         jTextArea = new JTextArea();
         jTextArea.setSize(260,400);
@@ -69,11 +92,24 @@ public class MyFrame {
             }
         });
         allIssueBtn.addActionListener(e -> {
-
+            int startAt=0;
+            if(!("".equals(startAtJTextField.getText())||startAtJTextField.getText()==null)) {
+                startAt = Integer.parseInt(startAtJTextField.getText());
+            }
+            int issueCount=0;
+            if(!("".equals(issueCountJTextField.getText())||issueCountJTextField.getText()==null)) {
+                issueCount = Integer.parseInt(issueCountJTextField.getText());
+            }
+            IssueHandler issueHandler = new IssueHandler(this);
+            issueHandler.insertIssuesByCount(startAt,issueCount);
         });
         projectIssueBtn.addActionListener(e -> {
             String inputContent = JOptionPane.showInputDialog(jf, "输入项目的key(不同项目之间以英文逗号分隔):", "");
-            List<String> projectKey = Arrays.stream(inputContent.split(",|，")).toList();
+            List<String> projectKeys = Arrays.stream(inputContent.split(",|，")).toList();
+            IssueHandler issueHandler = new IssueHandler(this);
+            for(String projectKey:projectKeys){
+                issueHandler.insertIssuesByProject(projectKey);
+            }
         });
 
         // 4. 把 面板容器 作为窗口的内容面板 设置到 窗口

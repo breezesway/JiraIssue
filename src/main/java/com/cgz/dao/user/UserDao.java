@@ -6,7 +6,7 @@ import com.cgz.dao.Database;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.List;
+import java.util.Set;
 
 public class UserDao {
     public void insertUser(User user) throws SQLException {
@@ -19,7 +19,7 @@ public class UserDao {
         conn.close();
     }
 
-    public void insertUsers(List<User> users) throws SQLException {
+    public void insertUsers(Set<User> users) throws SQLException {
         DruidPooledConnection conn = Database.getConnection();
         String sql="replace into user values(?,?,?,?,?,?)";
         PreparedStatement pstmt = conn.prepareStatement(sql);

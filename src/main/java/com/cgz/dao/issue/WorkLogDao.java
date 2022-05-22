@@ -22,8 +22,8 @@ public class WorkLogDao {
             pstmt.setObject(5,workLog.getStarted());
             pstmt.setObject(6,workLog.getTimeSpent());
             pstmt.setObject(7,workLog.getTimeSpentSeconds());
-            pstmt.setObject(8,workLog.getAuthor().getDisplayName());
-            pstmt.setObject(9,workLog.getUpdateAuthor().getDisplayName());
+            pstmt.setObject(8,workLog.getAuthor()!=null?workLog.getAuthor().getDisplayName():null);
+            pstmt.setObject(9,workLog.getUpdateAuthor()!=null?workLog.getUpdateAuthor().getDisplayName():null);
             pstmt.setObject(10,workLog.getIssueId());
             pstmt.setObject(11,workLog.getIssueKey());
             pstmt.setObject(12,workLog.getSelf());

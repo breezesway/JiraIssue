@@ -4,7 +4,6 @@ import com.alibaba.druid.pool.DruidPooledConnection;
 import com.cgz.bean.issue.*;
 import com.cgz.bean.project.Component;
 import com.cgz.bean.project.Version;
-import com.cgz.bean.user.User;
 import com.cgz.dao.Database;
 
 import java.sql.PreparedStatement;
@@ -25,6 +24,7 @@ public class IssueDao {
     }
 
     public void insertIssues(List<Issue> issues) throws SQLException {
+        System.out.println("issue数量："+issues.size());
         DruidPooledConnection conn = Database.getConnection();
         String sql="replace into issue values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
         PreparedStatement pstmt = conn.prepareStatement(sql);
@@ -58,9 +58,9 @@ public class IssueDao {
         pstmt.setObject(16,issue.getIssueType());
         pstmt.setObject(17,issue.getProject());
 
-        pstmt.setObject(18,issue.getAssignee().getDisplayName());
-        pstmt.setObject(19,issue.getCreator().getDisplayName());
-        pstmt.setObject(20,issue.getReporter().getDisplayName());
+        pstmt.setObject(18,issue.getAssignee()!=null?issue.getAssignee().getDisplayName():null);
+        pstmt.setObject(19,issue.getCreator()!=null?issue.getCreator().getDisplayName():null);
+        pstmt.setObject(20,issue.getReporter()!=null?issue.getReporter().getDisplayName():null);
 
         pstmt.setObject(21,issue.getTimeEstimate());
         pstmt.setObject(22,issue.getAggregateTimeOriginalEstimate());
@@ -80,7 +80,7 @@ public class IssueDao {
         pstmt.setObject(35,issue.getTimetracking()!=null ? issue.getTimetracking().getRemainingEstimateSeconds() : null);
         pstmt.setObject(36,issue.getTimetracking()!=null ? issue.getTimetracking().getTimeSpentSeconds() : null);
 
-        pstmt.setObject(37,issue.getLabels().toString());
+        pstmt.setObject(37,issue.getLabels()!=null?issue.getLabels().toString():null);
 
         ArrayList<String> list = new ArrayList<>();
         for (Version version:issue.getFixVersions()){
@@ -121,10 +121,10 @@ public class IssueDao {
         pstmt.setObject(43,list.toString());
         list.clear();
 
-        pstmt.setObject(44,issue.getSubtasks().toString());
+        pstmt.setObject(44,issue.getSubtasks()!=null?issue.getSubtasks().toString():null);
         pstmt.setObject(45,issue.getParent());
 
-        pstmt.setObject(46,issue.getIssueLinks().toString());
+        pstmt.setObject(46,issue.getIssueLinks()!=null?issue.getIssueLinks().toString():null);
 
         for (RemoteLink remoteLink:issue.getRemoteLinks()){
             list.add(String.valueOf(remoteLink.getId()));

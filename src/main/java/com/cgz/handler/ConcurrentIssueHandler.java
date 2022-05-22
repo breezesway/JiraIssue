@@ -5,25 +5,37 @@ import com.cgz.bean.user.User;
 import com.cgz.dao.issue.*;
 import com.cgz.dao.user.UserDao;
 import com.cgz.request.issue.*;
+import com.cgz.ui.MyFrame;
 import com.cgz.util.ParseUtil;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class IssueHandler {
+public class ConcurrentIssueHandler {
 
-    public int threadCount = 1;
-    public ExecutorService executorService ;
+    private ExecutorService executorService ;
 
-    public IssueHandler(){}
-    public IssueHandler(int threadCount){
-        this.threadCount = threadCount;
-        executorService = Executors.newFixedThreadPool(threadCount);
+    private MyFrame myFrame;
+
+    private List<Issue> issues = Collections.synchronizedList(new ArrayList<>());
+
+    private Set<User> users = Collections.synchronizedSet(new HashSet<>());
+    private List<RemoteLink> remoteLinks = Collections.synchronizedList(new ArrayList<>());
+    private List<Comment> comments = Collections.synchronizedList(new ArrayList<>());
+    private List<WorkLog> workLogs = Collections.synchronizedList(new ArrayList<>());
+
+    private List<Attachment> attachments = Collections.synchronizedList(new ArrayList<>());
+    private List<IssueLink> issueLinks = Collections.synchronizedList(new ArrayList<>());
+    private List<History> histories = Collections.synchronizedList(new ArrayList<>());
+    private List<Transition> transitions = Collections.synchronizedList(new ArrayList<>());
+
+    public ConcurrentIssueHandler(int threadCount, MyFrame myFrame){
+        this.executorService = Executors.newFixedThreadPool(threadCount);
+        this.myFrame = myFrame;
     }
 
     /**
@@ -31,29 +43,16 @@ public class IssueHandler {
      * @param projectKey 项目的key
      */
     public void insertMutliIssue(String projectKey) throws UnirestException, SQLException {
-        List<Issue> issues = new IssueAPI().getIssues(projectKey, executorService, threadCount);
-        System.out.println("正在获取issue的详细信息...");
-        int issueNum = issues.size()/threadCount+1;  //每个线程需要处理的issue数量
-        ArrayList<List<Issue>> sublistList = new ArrayList<>();
-        for (int i=0;i<issues.size();i+=issueNum){
-            List<Issue> subList = issues.subList(i, Math.min(i + issueNum, issues.size()));
-            sublistList.add(subList);
-        }
-        List<User> users = new ArrayList<>();
-        List<RemoteLink> remoteLinks = new ArrayList<>();
-        List<Comment> comments = new ArrayList<>();
-        List<WorkLog> workLogs = new ArrayList<>();
-
-        List<Attachment> attachments = new ArrayList<>();
-        List<IssueLink> issueLinks = new ArrayList<>();
-        List<History> histories = new ArrayList<>();
-        List<Transition> transitions = new ArrayList<>();
-
-        CountDownLatch cdl = new CountDownLatch(threadCount);
-        for (List<Issue> list:sublistList){
+        IssueAPI issueAPI = new IssueAPI();
+        int issueCount = issueAPI.getIssueCount(projectKey);
+        myFrame.addJTextAreaInfo(projectKey+"的issue数量为"+issueCount+"个...");
+        CountDownLatch cdl = new CountDownLatch(issueCount%1000==0?issueCount/1000:issueCount/1000+1);
+        myFrame.addJTextAreaInfo("正在获取issue...");
+        for (int i=0;i<issueCount;i+=1000){
+            int finalI = i;
             executorService.submit(()->{
                 try {
-                    Task(cdl,list,users,remoteLinks,comments,workLogs,issueLinks,histories,transitions);
+                    Task(cdl,projectKey, finalI,1000);
                 } catch (UnirestException e) {
                     e.printStackTrace();
                 }
@@ -64,8 +63,8 @@ public class IssueHandler {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        System.out.println("已获取"+issues.size()+"个issue的详细信息...");
-        System.out.println("正在插入数据库...");
+        myFrame.addJTextAreaInfo("issue获取完成...");
+        myFrame.addJTextAreaInfo("正在插入...");
         new IssueDao().insertIssues(issues);
         new UserDao().insertUsers(users);
         new AttachmentDao().insertAttachments(attachments);
@@ -75,13 +74,13 @@ public class IssueHandler {
         new WorkLogDao().insertWorkLogs(workLogs);
         new HistoryDao().insertHistories(histories);
         new TransitionDao().insertTransitions(transitions);
-
-        System.out.println(issues.size()+"个issue已插入!");
+        myFrame.addJTextAreaInfo("全部issue及其信息插入完成!");
         executorService.shutdown();
     }
 
-    private void Task(CountDownLatch cdl,List<Issue> issues, List<User> users, List<RemoteLink> remoteLinks, List<Comment> comments ,List<WorkLog> workLogs,List<IssueLink> issueLinks,List<History> histories,List<Transition> transitions) throws UnirestException {
-        List<User> subUsers = new ArrayList<>();
+    private void Task(CountDownLatch cdl,String projectKey, int startAt, int maxResults) throws UnirestException {
+        List<Issue> subIssues = new IssueAPI().getIssues(projectKey, startAt, maxResults);
+        Set<User> subUsers = new HashSet<>();
         List<RemoteLink> subRemoteLinks = new ArrayList<>();
         List<Comment> subComments = new ArrayList<>();
         List<WorkLog> subWorkLogs = new ArrayList<>();
@@ -94,16 +93,23 @@ public class IssueHandler {
 
         IssueLinkAPI issueLinkAPI = new IssueLinkAPI();
 
-        List<Attachment> attachments = new ArrayList<>();
+        List<Attachment> subAttachments = new ArrayList<>();
         List<IssueLink> subIssueLinks = new ArrayList<>();
         List<History> subHistories = new ArrayList<>();
         List<Transition> subTransitions = new ArrayList<>();
-        for (Issue issue:issues){
+        int i=1;
+        for (Issue issue:subIssues){
             String issueKey = issue.getKey();
 
-            subUsers.add(issue.getAssignee());
-            subUsers.add(issue.getCreator());
-            subUsers.add(issue.getReporter());
+            if(issue.getAssignee()!=null) {
+                subUsers.add(issue.getAssignee());
+            }
+            if(issue.getCreator()!=null) {
+                subUsers.add(issue.getCreator());
+            }
+            if(issue.getReporter()!=null) {
+                subUsers.add(issue.getReporter());
+            }
 
             //List<User> issueWatchers = watcherAPI.getWatchers(issueKey);
             //List<User> issueVoters = voteAPI.getVoters(issueKey);
@@ -123,20 +129,27 @@ public class IssueHandler {
             issue.setComments(issueComments);
             issue.setWorklog(issueWorkLogs);
 
-            attachments.addAll(issue.getAttachment());
+            subAttachments.addAll(issue.getAttachment());
             subIssueLinks.addAll(issueLinkAPI.getIssueLinks(issue.getIssueLinks()));
             subHistories.addAll(issue.getHistories());
             subTransitions.addAll(ParseUtil.parseTransitionList(issue));
-            System.out.println(issueKey);
+            System.out.println(Thread.currentThread().getName()+":"+i++);
         }
+        System.out.println(Thread.currentThread().getName()+"开始合并");
+        issues.addAll(subIssues);
+
         users.addAll(subUsers);
+
         remoteLinks.addAll(subRemoteLinks);
         comments.addAll(subComments);
         workLogs.addAll(subWorkLogs);
+
         issueLinks.addAll(subIssueLinks);
+        attachments.addAll(subAttachments);
         histories.addAll(subHistories);
         transitions.addAll(subTransitions);
         cdl.countDown();
+        System.out.println(Thread.currentThread().getName()+"执行完成...");
     }
 
     /**

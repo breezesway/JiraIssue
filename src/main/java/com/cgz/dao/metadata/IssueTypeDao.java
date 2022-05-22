@@ -11,7 +11,7 @@ import java.util.List;
 public class IssueTypeDao {
     public void insertIssueTypes(List<IssueType> issueTypes) throws SQLException {
         DruidPooledConnection conn = Database.getConnection();
-        String sql="insert into issuetype(id,name,description,subtask,avatarId,self,iconUrl) values(?,?,?,?,?,?,?)";
+        String sql="replace into issuetype(id,name,description,subtask,avatarId,self,iconUrl) values(?,?,?,?,?,?,?)";
         PreparedStatement pstmt = conn.prepareStatement(sql);
         for(IssueType issueType:issueTypes){
             pstmt.setObject(1,issueType.getId());

@@ -213,7 +213,7 @@ public class ParseUtil {
             for (History.Item item:history.getItems()){
                 if("status".equals(item.getField())){
                     Transition transition = new Transition();
-                    transition.setAuthorDisplayName(history.getAuthor().getDisplayName());
+                    transition.setAuthorDisplayName(history.getAuthor()!=null?history.getAuthor().getDisplayName():null);
                     transition.setCreated(history.getCreated());
                     transition.setIssueKey(history.getIssueKey());
                     transition.setFromString(item.getFromString());

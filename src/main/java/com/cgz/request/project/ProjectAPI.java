@@ -15,7 +15,7 @@ public class ProjectAPI {
                 .queryString("expand","description,lead,url")
                 .asString()
                 .getBody();
-
+        System.out.println("已获取到全部项目");
         return JSONArray.parseArray(body,Project.class);
     }
 }

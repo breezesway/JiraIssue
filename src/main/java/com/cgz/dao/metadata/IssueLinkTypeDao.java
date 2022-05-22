@@ -11,7 +11,7 @@ import java.util.List;
 public class IssueLinkTypeDao {
     public void insertIssueLinkTypes(List<IssueLinkType> issueLinkTypes) throws SQLException {
         DruidPooledConnection conn = Database.getConnection();
-        String sql="insert into issuelinktype(id,name,inward,outward,self) values(?,?,?,?,?)";
+        String sql="replace into issuelinktype(id,name,inward,outward,self) values(?,?,?,?,?)";
         PreparedStatement pstmt = conn.prepareStatement(sql);
         for(IssueLinkType issueLinkType:issueLinkTypes){
             pstmt.setObject(1,issueLinkType.getId());

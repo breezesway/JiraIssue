@@ -11,7 +11,7 @@ import java.util.List;
 public class StatusCategoryDao {
     public void insertStatusCategories(List<StatusCategory> statusCategories) throws SQLException {
         DruidPooledConnection conn = Database.getConnection();
-        String sql="insert into statuscategory values(?,?,?,?,?)";
+        String sql="replace into statuscategory values(?,?,?,?,?)";
         PreparedStatement pstmt = conn.prepareStatement(sql);
         for (StatusCategory statusCategory:statusCategories){
             pstmt.setObject(1,statusCategory.getId());

@@ -11,7 +11,7 @@ import java.util.List;
 public class ProjectCategoryDao {
     public void insertProjectCategories(List<ProjectCategory> projectCategories) throws SQLException {
         DruidPooledConnection conn = Database.getConnection();
-        String sql="insert into projectcategory values(?,?,?,?)";
+        String sql="replace into projectcategory values(?,?,?,?)";
         PreparedStatement pstmt = conn.prepareStatement(sql);
         for(ProjectCategory projectCategory:projectCategories){
             pstmt.setObject(1,projectCategory.getId());

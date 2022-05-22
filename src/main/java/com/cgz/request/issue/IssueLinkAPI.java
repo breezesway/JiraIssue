@@ -9,17 +9,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class IssueLinkAPI {
-    public IssueLink getIssueLink(String linkId) throws UnirestException {
+    public IssueLink getIssueLink(String linkId){
         String url="https://issues.apache.org/jira/rest/api/2/issueLink/";
-        String body = Unirest.get(url+linkId)
-                .header("Accept", "application/json")
-                .asString()
-                .getBody();
+        String body = null;
+        try {
+            body = Unirest.get(url+linkId)
+                    .header("Accept", "application/json")
+                    .asString()
+                    .getBody();
+        } catch (UnirestException e) {
+            e.printStackTrace();
+        }
 
         return ParseUtil.parseIssueLink(body);
     }
 
-    public List<IssueLink> getIssueLinks(List<String> issueLinkIds) throws UnirestException {
+    public List<IssueLink> getIssueLinks(List<String> issueLinkIds){
         List<IssueLink> issueLinks = new ArrayList<>();
         for (String linkId:issueLinkIds){
             issueLinks.add(getIssueLink(linkId));

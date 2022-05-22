@@ -18,6 +18,7 @@ import java.util.List;
 
 public class ProjectHandler {
     public void getAllProjectInfo(MyFrame myFrame) throws UnirestException, SQLException {
+        myFrame.addJTextAreaInfo("正在获取Project的信息...");
         List<Project> projects = new ProjectAPI().getProjects();
         myFrame.addJTextAreaInfo("已获取到所有Project的信息...");
         new ProjectDao().insertProjects(projects);

@@ -9,12 +9,17 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import java.util.List;
 
 public class RemoteLinkAPI {
-    public List<RemoteLink> getRemoteLinks(String issueKey) throws UnirestException {
+    public List<RemoteLink> getRemoteLinks(String issueKey){
         String url = "https://issues.apache.org/jira/rest/api/2/issue/"+issueKey+"/remotelink";
-        String body = Unirest.get(url)
-                .header("Accept", "application/json")
-                .asString()
-                .getBody();
+        String body = null;
+        try {
+            body = Unirest.get(url)
+                    .header("Accept", "application/json")
+                    .asString()
+                    .getBody();
+        } catch (UnirestException e) {
+            e.printStackTrace();
+        }
         return ParseUtil.parseRemoteLinkList(JSONObject.parseArray(body));
     }
 }

@@ -16,7 +16,7 @@ public class AttachmentDao {
         for(Attachment attachment:attachments){
             pstmt.setObject(1,attachment.getId());
             pstmt.setObject(2,attachment.getFilename());
-            pstmt.setObject(3,attachment.getAuthor().getDisplayName());
+            pstmt.setObject(3,attachment.getAuthor()!=null?attachment.getAuthor().getDisplayName():null);
             pstmt.setObject(4,attachment.getCreated());
             pstmt.setObject(5,attachment.getSize());
             pstmt.setObject(6,attachment.getMineType());

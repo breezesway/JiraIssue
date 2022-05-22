@@ -19,8 +19,8 @@ public class CommentDao {
             pstmt.setObject(2,comment.getBody());
             pstmt.setObject(3,comment.getCreated());
             pstmt.setObject(4,comment.getUpdated());
-            pstmt.setObject(5,comment.getAuthor().getDisplayName());
-            pstmt.setObject(6,comment.getUpdateAuthor().getDisplayName());
+            pstmt.setObject(5,comment.getAuthor()!=null?comment.getAuthor().getDisplayName():null);
+            pstmt.setObject(6,comment.getUpdateAuthor()!=null?comment.getUpdateAuthor().getDisplayName():null);
             pstmt.setObject(7,comment.getIssueKey());
             pstmt.setObject(8,comment.getSelf());
             pstmt.addBatch();
