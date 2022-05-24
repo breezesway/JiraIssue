@@ -9,6 +9,7 @@ import com.cgz.bean.project.Version;
 import com.cgz.bean.user.User;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class ParseUtil {
@@ -206,8 +207,10 @@ public class ParseUtil {
         return histories;
     }
 
-    public static List<Transition> parseTransitionList(Issue issue){
+    public static List<Object> parseTransitionList(Issue issue){
         List<Transition> transitions = new ArrayList<>();
+        List<PriorityChanged> priorityChangeds = new ArrayList<>();
+        List<Object> list = new ArrayList<>();
         List<History> histories = issue.getHistories();
         for (History history:histories){
             for (History.Item item:history.getItems()){
@@ -219,10 +222,20 @@ public class ParseUtil {
                     transition.setFromString(item.getFromString());
                     transition.setToString(item.getToString());
                     transitions.add(transition);
+                }else if("priority".equals(item.getField())){
+                    PriorityChanged priorityChanged = new PriorityChanged();
+                    priorityChanged.setAuthorDisplayName(history.getAuthor()!=null?history.getAuthor().getDisplayName():null);
+                    priorityChanged.setCreated(history.getCreated());
+                    priorityChanged.setIssueKey(history.getIssueKey());
+                    priorityChanged.setFromString(item.getFromString());
+                    priorityChanged.setToString(item.getToString());
+                    priorityChangeds.add(priorityChanged);
                 }
             }
         }
-        return transitions;
+        list.add(transitions);
+        list.add(priorityChangeds);
+        return list;
     }
 
     public static List<String> parseIssueKeyList(String body){

@@ -8,28 +8,30 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class BreakPointDao {
-    public int getLastBreakPoint() throws SQLException {
+    public int getLastBreakPoint(String jql) throws SQLException {
         DruidPooledConnection conn = Database.getConnection();
-        String sql="select lastpoint from breakpoint";
+        String sql="select lastpoint from breakpoint where jql=?";
         PreparedStatement pstmt = conn.prepareStatement(sql);
+        pstmt.setString(1,jql);
         ResultSet resultSet = pstmt.executeQuery();
         int lastpoint = 0;
         if(resultSet.next()){
             lastpoint = resultSet.getInt("lastpoint");
         }else {
-            insertLastBreakPoint();
+            insertLastBreakPoint(jql);
         }
         pstmt.close();
         conn.close();
         return lastpoint;
     }
 
-    public void updateLastBreakpoint(int num){
+    public void updateLastBreakpoint(int num, String jql){
         try {
             DruidPooledConnection conn = Database.getConnection();
-            String sql="update breakpoint set lastpoint=?";
+            String sql="update breakpoint set lastpoint=? where jql=?";
             PreparedStatement pstmt = conn.prepareStatement(sql);
             pstmt.setObject(1,num);
+            pstmt.setObject(2,jql);
             pstmt.executeUpdate();
             pstmt.close();
             conn.close();
@@ -38,10 +40,12 @@ public class BreakPointDao {
         }
     }
 
-    public void insertLastBreakPoint() throws SQLException {
+    public void insertLastBreakPoint(String jql) throws SQLException {
         DruidPooledConnection conn = Database.getConnection();
-        String sql="intsert into breakpoint value (0)";
+        String sql="insert into breakpoint value (?,?)";
         PreparedStatement pstmt = conn.prepareStatement(sql);
+        pstmt.setObject(1,0);
+        pstmt.setObject(2,jql);
         pstmt.execute();
         pstmt.close();
         conn.close();

@@ -26,11 +26,11 @@ public class IssueAPI {
         return ParseUtil.parseIssue(body);
     }
 
-    public List<Issue> getIssues(String projectKey,int startAt,int maxResults){
+    public List<Issue> getIssues(String jql,int startAt,int maxResults){
         String url="https://issues.apache.org/jira/rest/api/2/search";
         HashMap<String, Object> parameters = new HashMap<>();
-        if(!"all".equals(projectKey)) {
-            parameters.put("jql", "project=" + projectKey);
+        if(!"all".equals(jql)) {
+            parameters.put("jql", jql);
         }
         parameters.put("fields","*all");
         parameters.put("startAt",startAt);
@@ -49,11 +49,11 @@ public class IssueAPI {
         return ParseUtil.parseIssueList(JSONObject.parseObject(body).getJSONArray("issues"));
     }
 
-    public int getIssueCount(String projectKey){
+    public int getIssueCount(String jql){
         String url="https://issues.apache.org/jira/rest/api/2/search";
         HashMap<String, Object> parameters = new HashMap<>();
-        if(!"all".equals(projectKey)) {
-            parameters.put("jql", "project=" + projectKey);
+        if(!"all".equals(jql)) {
+            parameters.put("jql", jql);
         }
         parameters.put("fields","key");
         parameters.put("maxResults",1);

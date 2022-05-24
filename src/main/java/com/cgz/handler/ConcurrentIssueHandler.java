@@ -32,6 +32,7 @@ public class ConcurrentIssueHandler {
     private List<IssueLink> issueLinks = Collections.synchronizedList(new ArrayList<>());
     private List<History> histories = Collections.synchronizedList(new ArrayList<>());
     private List<Transition> transitions = Collections.synchronizedList(new ArrayList<>());
+    private List<PriorityChanged> priorityChangeds = Collections.synchronizedList(new ArrayList<>());
 
     public ConcurrentIssueHandler(int threadCount, MyFrame myFrame){
         this.executorService = Executors.newFixedThreadPool(threadCount);
@@ -74,6 +75,7 @@ public class ConcurrentIssueHandler {
         new WorkLogDao().insertWorkLogs(workLogs);
         new HistoryDao().insertHistories(histories);
         new TransitionDao().insertTransitions(transitions);
+        new PriorityChangedDao().insertPriorityChangeds(priorityChangeds);
         myFrame.addJTextAreaInfo("全部issue及其信息插入完成!");
         executorService.shutdown();
     }
@@ -97,6 +99,7 @@ public class ConcurrentIssueHandler {
         List<IssueLink> subIssueLinks = new ArrayList<>();
         List<History> subHistories = new ArrayList<>();
         List<Transition> subTransitions = new ArrayList<>();
+        List<PriorityChanged> subPriorityChangeds = new ArrayList<>();
         int i=1;
         for (Issue issue:subIssues){
             String issueKey = issue.getKey();
@@ -132,7 +135,9 @@ public class ConcurrentIssueHandler {
             subAttachments.addAll(issue.getAttachment());
             subIssueLinks.addAll(issueLinkAPI.getIssueLinks(issue.getIssueLinks()));
             subHistories.addAll(issue.getHistories());
-            subTransitions.addAll(ParseUtil.parseTransitionList(issue));
+            List<Object> list = ParseUtil.parseTransitionList(issue);
+            subTransitions.addAll((List<Transition>) list.get(0));
+            subPriorityChangeds.addAll((List<PriorityChanged>) list.get(1));
             System.out.println(Thread.currentThread().getName()+":"+i++);
         }
         System.out.println(Thread.currentThread().getName()+"开始合并");
@@ -148,6 +153,7 @@ public class ConcurrentIssueHandler {
         attachments.addAll(subAttachments);
         histories.addAll(subHistories);
         transitions.addAll(subTransitions);
+        priorityChangeds.addAll(subPriorityChangeds);
         cdl.countDown();
         System.out.println(Thread.currentThread().getName()+"执行完成...");
     }
@@ -216,10 +222,16 @@ public class ConcurrentIssueHandler {
         if(!issue.getHistories().isEmpty()){
             new HistoryDao().insertHistories(issue.getHistories());
         }
+        List<Object> list = ParseUtil.parseTransitionList(issue);
         //插入transition表
-        List<Transition> transitions = ParseUtil.parseTransitionList(issue);
+        List<Transition> transitions =(List<Transition>) list.get(0);
         if(!transitions.isEmpty()){
             new TransitionDao().insertTransitions(transitions);
+        }
+        //插入prioritychanged表
+        List<PriorityChanged> priorityChangeds =(List<PriorityChanged>) list.get(1);
+        if(!priorityChangeds.isEmpty()){
+            new PriorityChangedDao().insertPriorityChangeds(priorityChangeds);
         }
         System.out.println(issueKey+"已插入!");
     }

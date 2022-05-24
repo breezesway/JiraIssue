@@ -33,6 +33,7 @@ public class IssueHandler {
     private List<IssueLink> issueLinks = new ArrayList<>();
     private List<History> histories = new ArrayList<>();
     private List<Transition> transitions = new ArrayList<>();
+    private List<PriorityChanged> priorityChangeds = new ArrayList<>();
 
     public IssueHandler(MyFrame myFrame){
         this.myFrame = myFrame;
@@ -41,7 +42,6 @@ public class IssueHandler {
     public void insertIssuesByProject(String projectKey){
         int issueCount = issueAPI.getIssueCount(projectKey);
         myFrame.addJTextAreaInfo(projectKey+"的issue数量为"+issueCount+"个...");
-        System.out.println(issueCount);
         myFrame.addJTextAreaInfo("正在获取"+projectKey+"的issue...");
         for (int i=0;i<issueCount;i+=1000) {
             issues.addAll(issueAPI.getIssues(projectKey, i, 1000));
@@ -49,7 +49,7 @@ public class IssueHandler {
         int n=1;
         for (Issue issue:issues){
             getIssueInfo(issue);
-            if(n%100==0) {
+            if(n%10==0) {
                 myFrame.addJTextAreaInfo(projectKey + "已获取" + n + "个issue...");
             }
             n++;
@@ -60,37 +60,40 @@ public class IssueHandler {
         myFrame.addJTextAreaInfo(projectKey+"的全部issue及其信息插入完成!");
     }
 
-    public void insertIssuesByCount(int startAt, int issueCount){
+    public void insertIssuesByCount(String jql, int startAt, int issueCount){
+        if("".equals(jql)||jql==null){
+            jql = "all";
+        }
         BreakPointDao breakPointDao = new BreakPointDao();
         if (startAt==0){
             try {
-                startAt = breakPointDao.getLastBreakPoint();
+                startAt = breakPointDao.getLastBreakPoint(jql);
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
             }
         }
         if(issueCount==0){
-            issueCount = issueAPI.getIssueCount("all");
+            issueCount = issueAPI.getIssueCount(jql);
         }
         myFrame.addJTextAreaInfo("要获取的issue数量为"+issueCount+"个...");
         myFrame.addJTextAreaInfo("正在获取issue...");
         int onceIssueCount = 500;
         for (int i=0;i<issueCount;i+=onceIssueCount) {
             long stime = System.currentTimeMillis();
-            issues.addAll(issueAPI.getIssues("all", startAt+i, onceIssueCount));
+            issues.addAll(issueAPI.getIssues(jql, startAt+i, onceIssueCount));
             int n=1;
             for (Issue issue:issues){
                 getIssueInfo(issue);
                 if(n%10==0) {
                     myFrame.addJTextAreaInfo("已获取" + n + "个issue...");
-                    System.out.println(n);
                 }
                 n++;
             }
+            myFrame.addJTextAreaInfo("已获取" + n + "个issue...");
             myFrame.addJTextAreaInfo("issue获取完成...");
             myFrame.addJTextAreaInfo("issue正在插入mysql...");
             insertIssueInfo();
-            breakPointDao.updateLastBreakpoint(startAt+i);
+            breakPointDao.updateLastBreakpoint(startAt+i,jql);
             long etime = System.currentTimeMillis();
             System.out.println((etime-stime)/60000);
         }
@@ -131,7 +134,9 @@ public class IssueHandler {
         attachments.addAll(issue.getAttachment());
         issueLinks.addAll(issueLinkAPI.getIssueLinks(issue.getIssueLinks()));
         histories.addAll(issue.getHistories());
-        transitions.addAll(ParseUtil.parseTransitionList(issue));
+        List<Object> list = ParseUtil.parseTransitionList(issue);
+        transitions.addAll((List<Transition>)list.get(0));
+        priorityChangeds.addAll((List<PriorityChanged>)list.get(1));
     }
 
     private void insertIssueInfo() {
@@ -145,6 +150,7 @@ public class IssueHandler {
             new WorkLogDao().insertWorkLogs(workLogs);
             new HistoryDao().insertHistories(histories);
             new TransitionDao().insertTransitions(transitions);
+            new PriorityChangedDao().insertPriorityChangeds(priorityChangeds);
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
