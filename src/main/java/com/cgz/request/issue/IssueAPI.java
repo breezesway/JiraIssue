@@ -68,7 +68,6 @@ public class IssueAPI {
             e.printStackTrace();
         }
         int total = JSONObject.parseObject(body).getIntValue("total");
-        System.out.println(total);
         return total;
     }
 }

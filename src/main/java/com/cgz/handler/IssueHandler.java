@@ -73,35 +73,45 @@ public class IssueHandler {
             }
         }
         if(issueCount==0){
-            issueCount = issueAPI.getIssueCount(jql);
+            issueCount = issueAPI.getIssueCount(jql)-startAt;
         }
         myFrame.addJTextAreaInfo("要获取的issue数量为"+issueCount+"个...");
         myFrame.addJTextAreaInfo("正在获取issue...");
         int onceIssueCount = 500;
+        int n=0;
+        long stime = System.currentTimeMillis();
         for (int i=0;i<issueCount;i+=onceIssueCount) {
-            long stime = System.currentTimeMillis();
             issues.addAll(issueAPI.getIssues(jql, startAt+i, onceIssueCount));
-            int n=1;
             for (Issue issue:issues){
                 getIssueInfo(issue);
+                n++;
                 if(n%10==0) {
                     myFrame.addJTextAreaInfo("已获取" + n + "个issue...");
                 }
-                n++;
+                long etime = System.currentTimeMillis();
+                if((etime-stime)/60000>60){
+                    myFrame.addJTextAreaInfo("已运行1小时，防止被锁IP，现暂停一小时...");
+                    try {
+                        Thread.sleep(1000*60*60);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    myFrame.addJTextAreaInfo("继续获取...");
+                    stime = System.currentTimeMillis();
+                }
             }
             myFrame.addJTextAreaInfo("已获取" + n + "个issue...");
             myFrame.addJTextAreaInfo("issue获取完成...");
-            myFrame.addJTextAreaInfo("issue正在插入mysql...");
+            myFrame.addJTextAreaInfo("插入mysql...");
             insertIssueInfo();
-            breakPointDao.updateLastBreakpoint(startAt+i,jql);
-            long etime = System.currentTimeMillis();
-            System.out.println((etime-stime)/60000);
+            breakPointDao.updateLastBreakpoint(startAt+n,jql);
         }
         myFrame.addJTextAreaInfo("已全部完成!");
     }
 
     private void getIssueInfo(Issue issue){
         String issueKey = issue.getKey();
+        System.out.println(issueKey);
 
         if(issue.getAssignee()!=null) {
             users.add(issue.getAssignee());

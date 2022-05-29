@@ -9,7 +9,6 @@ import com.cgz.bean.project.Version;
 import com.cgz.bean.user.User;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class ParseUtil {
@@ -30,7 +29,7 @@ public class ParseUtil {
         issue.setEnvironment((String) fields.get("environment"));
         issue.setDuedate((String) fields.get("duedate"));
 
-        issue.setPriority((String) fields.getJSONObject("priority").get("name"));
+        issue.setPriority(fields.containsKey("priority")?(String) fields.getJSONObject("priority").get("name"):null);
         issue.setStatus((String) fields.getJSONObject("status").get("name"));
         issue.setResolution(fields.containsKey("resolution")?fields.getJSONObject("resolution").getString("name"):null);
         issue.setIssueType((String) fields.getJSONObject("issuetype").get("name"));
