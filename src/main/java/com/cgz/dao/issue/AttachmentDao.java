@@ -11,7 +11,7 @@ import java.util.List;
 public class AttachmentDao {
     public void insertAttachments(List<Attachment> attachments) throws SQLException {
         DruidPooledConnection conn = Database.getConnection();
-        String sql="replace into attachment values(?,?,?,?,?,?,?,?)";
+        String sql="insert ignore into attachment values(?,?,?,?,?,?,?,?)";
         PreparedStatement pstmt = conn.prepareStatement(sql);
         for(Attachment attachment:attachments){
             pstmt.setObject(1,attachment.getId());

@@ -21,7 +21,7 @@ public class IssueLinkDao {
 
     public void insertIssueLinks(List<IssueLink> issueLinks) throws SQLException {
         DruidPooledConnection conn = Database.getConnection();
-        String sql="replace into issuelink values(?,?,?,?,?)";
+        String sql="insert ignore into issuelink values(?,?,?,?,?)";
         PreparedStatement pstmt = conn.prepareStatement(sql);
         for (IssueLink issueLink:issueLinks){
             setValues(pstmt,issueLink);

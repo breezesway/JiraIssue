@@ -11,7 +11,7 @@ import java.util.List;
 public class HistoryDao {
     public void insertHistories(List<History> histories) throws SQLException {
         DruidPooledConnection conn = Database.getConnection();
-        String sql="replace into history values(?,?,?,?,?)";
+        String sql="insert ignore into history values(?,?,?,?,?)";
         PreparedStatement pstmt = conn.prepareStatement(sql);
         for(History history:histories){
             pstmt.setObject(1,history.getId());

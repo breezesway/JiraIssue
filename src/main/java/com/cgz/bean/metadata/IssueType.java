@@ -5,8 +5,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class IssueType {
     private int id;
     private String name;
@@ -15,4 +13,5 @@ public class IssueType {
     private String avatarId;
     private String self;
     private String iconUrl;
+
 }

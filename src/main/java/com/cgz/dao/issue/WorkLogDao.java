@@ -12,7 +12,7 @@ import java.util.List;
 public class WorkLogDao {
     public void insertWorkLogs(List<WorkLog> workLogs) throws SQLException {
         DruidPooledConnection conn = Database.getConnection();
-        String sql="replace into worklog values(?,?,?,?,?,?,?,?,?,?,?,?)";
+        String sql="insert ignore into worklog values(?,?,?,?,?,?,?,?,?,?,?,?)";
         PreparedStatement pstmt = conn.prepareStatement(sql);
         for(WorkLog workLog:workLogs){
             pstmt.setObject(1,workLog.getId());

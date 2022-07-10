@@ -8,4 +8,5 @@ public class VisibleFunctionName {
     private String displayName;
     private String isList;
     private String[] types;
+
 }

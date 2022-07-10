@@ -17,4 +17,5 @@ public class Project {
     private String projectTypeKey;
     private boolean archived;
     private String self;
+
 }

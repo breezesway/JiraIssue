@@ -7,12 +7,14 @@ import java.sql.SQLException;
 
 public class Database {
 
+    public static String databaseName = "jira";
+
     private static DruidDataSource dataSource;
 
     static {
         //数据源配置
         dataSource = new DruidDataSource();
-        dataSource.setUrl("jdbc:mysql://127.0.0.1/jira?serverTimezone=UTC&rewriteBatchedStatements=true");
+        dataSource.setUrl("jdbc:mysql://127.0.0.1/"+databaseName+"?serverTimezone=UTC&rewriteBatchedStatements=true");
         dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver"); //这个可以缺省的，会根据url自动识别
         dataSource.setUsername("root");
         dataSource.setPassword("123456");

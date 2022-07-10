@@ -4,18 +4,19 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Arrays;
+
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class ServerInfo {
-    String baseUrl;
-    String version;
-    int[] versionNumbers;
-    String deploymentType;
-    String buildNumber;
-    String buildDate;
-    String databaseBuildNumber;
-    String serverTime;
-    String scmInfo;
-    String serverTitle;
+    private String baseUrl;
+    private String version;
+    private int[] versionNumbers;
+    private String deploymentType;
+    private String buildNumber;
+    private String buildDate;
+    private String databaseBuildNumber;
+    private String serverTime;
+    private String scmInfo;
+    private String serverTitle;
+
 }

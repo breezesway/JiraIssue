@@ -13,4 +13,5 @@ public class Comment {
     private User updateAuthor;
     private String issueKey;
     private String self;
+
 }

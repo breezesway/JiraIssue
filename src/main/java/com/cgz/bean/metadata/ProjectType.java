@@ -9,4 +9,5 @@ public class ProjectType {
     private String descriptionI18nKey;
     private String icon;
     private String color;
+
 }

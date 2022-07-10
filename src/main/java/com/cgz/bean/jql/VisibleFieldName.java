@@ -11,4 +11,5 @@ public class VisibleFieldName {
     private String searchable;
     private String[] operators;
     private String[] types;
+
 }

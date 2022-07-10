@@ -17,4 +17,5 @@ public class WorkLog {
     private String issueId;
     private String issueKey;
     private String self;
+
 }

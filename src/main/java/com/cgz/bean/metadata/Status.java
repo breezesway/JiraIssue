@@ -10,4 +10,5 @@ public class Status {
     private String iconUrl;
     private String self;
     private StatusCategory statusCategory;
+
 }

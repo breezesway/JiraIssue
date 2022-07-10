@@ -11,7 +11,7 @@ import java.util.List;
 public class TransitionDao {
     public void insertTransitions(List<Transition> transitions) throws SQLException {
         DruidPooledConnection conn = Database.getConnection();
-        String sql="replace into transition values(?,?,?,?,?)";
+        String sql="insert ignore into transition values(?,?,?,?,?)";
         PreparedStatement pstmt = conn.prepareStatement(sql);
         for(Transition transition:transitions){
             pstmt.setObject(1,transition.getAuthorDisplayName());

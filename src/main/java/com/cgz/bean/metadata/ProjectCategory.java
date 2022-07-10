@@ -8,4 +8,5 @@ public class ProjectCategory {
     private String name;
     private String description;
     private String self;
+
 }

@@ -25,7 +25,7 @@ public class IssueDao {
 
     public void insertIssues(List<Issue> issues) throws SQLException {
         DruidPooledConnection conn = Database.getConnection();
-        String sql="replace into issue values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+        String sql="insert ignore into issue values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
         PreparedStatement pstmt = conn.prepareStatement(sql);
         for (Issue issue:issues){
             setValues(pstmt,issue);
@@ -56,10 +56,12 @@ public class IssueDao {
         pstmt.setObject(15,issue.getResolution());
         pstmt.setObject(16,issue.getIssueType());
         pstmt.setObject(17,issue.getProject());
+        //System.out.println("+g98");
 
         pstmt.setObject(18,issue.getAssignee()!=null?issue.getAssignee().getDisplayName():null);
         pstmt.setObject(19,issue.getCreator()!=null?issue.getCreator().getDisplayName():null);
         pstmt.setObject(20,issue.getReporter()!=null?issue.getReporter().getDisplayName():null);
+        //System.out.println("4+9fs");
 
         pstmt.setObject(21,issue.getTimeEstimate());
         pstmt.setObject(22,issue.getAggregateTimeOriginalEstimate());
@@ -67,6 +69,7 @@ public class IssueDao {
         pstmt.setObject(24,issue.getTimeOriginalEstimate());
         pstmt.setObject(25,issue.getTimeSpent());
         pstmt.setObject(26,issue.getAggregateTimeSpent());
+        //System.out.println("5f9+s");
 
         pstmt.setObject(27,issue.getAggregateProgress()!=null ? issue.getAggregateProgress().getProgress() : null);
         pstmt.setObject(28,issue.getAggregateProgress()!=null ?issue.getAggregateProgress().getTotal() : null);
@@ -78,24 +81,37 @@ public class IssueDao {
         pstmt.setObject(34,issue.getTimetracking()!=null ? issue.getTimetracking().getTimeSpent() : null);
         pstmt.setObject(35,issue.getTimetracking()!=null ? issue.getTimetracking().getRemainingEstimateSeconds() : null);
         pstmt.setObject(36,issue.getTimetracking()!=null ? issue.getTimetracking().getTimeSpentSeconds() : null);
+        //System.out.println("d4sv5");
 
         pstmt.setObject(37,issue.getLabels()!=null?issue.getLabels().toString():null);
+        //System.out.println("8+g9fg");
 
         ArrayList<String> list = new ArrayList<>();
-        for (Version version:issue.getFixVersions()){
-            list.add(version.getId());
+        if(issue.getFixVersions()==null){
+            pstmt.setObject(38, null);
+        }else {
+            for (Version version : issue.getFixVersions()) {
+                list.add(version.getId());
+            }
+            pstmt.setObject(38, list.toString());
+            list.clear();
         }
-        pstmt.setObject(38,list.toString());
-        list.clear();
+        //System.out.println("sg+5");
 
-        for (Version version:issue.getVersions()){
-            list.add(version.getId());
+        if(issue.getVersions()==null){
+            pstmt.setObject(39, null);
+        }else {
+            for (Version version : issue.getVersions()) {
+                list.add(version.getId());
+            }
+            pstmt.setObject(39, list.toString());
+            list.clear();
         }
-        pstmt.setObject(39,list.toString());
-        list.clear();
+        //System.out.println("dsz8+9v");
 
         pstmt.setObject(40,issue.getWatchCount());
         pstmt.setObject(41,issue.getVotesCount());
+        //System.out.println("uj6y5");
         /*for (User watcher:issue.getWatchers()){
             list.add(watcher.getDisplayName());
         }
@@ -108,45 +124,61 @@ public class IssueDao {
         pstmt.setObject(41,list.toString());
         list.clear();*/
 
-        for (Component component:issue.getComponents()){
-            list.add(component.getId());
+        if(issue.getComponents()==null){
+            pstmt.setObject(42,null);
+        }else {
+            for (Component component : issue.getComponents()) {
+                list.add(component.getId());
+            }
+            pstmt.setObject(42, list.toString());
+            list.clear();
         }
-        pstmt.setObject(42,list.toString());
-        list.clear();
+        //System.out.println("q2r");
 
-        for (Attachment attachment:issue.getAttachment()){
-            list.add(attachment.getId());
+        if(issue.getAttachment()==null){
+            pstmt.setObject(43,null);
+        }else {
+            for (Attachment attachment : issue.getAttachment()) {
+                list.add(attachment.getId());
+            }
+            pstmt.setObject(43, list.toString());
+            list.clear();
         }
-        pstmt.setObject(43,list.toString());
-        list.clear();
+        //System.out.println("i0-fth");
 
         pstmt.setObject(44,issue.getSubtasks()!=null?issue.getSubtasks().toString():null);
         pstmt.setObject(45,issue.getParent());
+        //System.out.println("er5y");
 
         pstmt.setObject(46,issue.getIssueLinks()!=null?issue.getIssueLinks().toString():null);
+        //System.out.println("e54yh");
 
         for (RemoteLink remoteLink:issue.getRemoteLinks()){
             list.add(String.valueOf(remoteLink.getId()));
         }
         pstmt.setObject(47,list.toString());
         list.clear();
+        //System.out.println("47");
 
         for (Comment comment:issue.getComments()){
             list.add(comment.getId());
         }
         pstmt.setObject(48,list.toString());
         list.clear();
+        //System.out.println("48");
 
         for (WorkLog workLog:issue.getWorklog()){
             list.add(workLog.getId());
         }
         pstmt.setObject(49,list.toString());
         list.clear();
+        //System.out.println("49");
 
         for (History history:issue.getHistories()){
             list.add(history.getId());
         }
         pstmt.setObject(50,list.toString());
         list.clear();
+        //System.out.println("50");
     }
 }

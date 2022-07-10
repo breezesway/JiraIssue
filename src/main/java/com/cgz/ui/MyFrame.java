@@ -9,8 +9,6 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 
 import javax.swing.*;
 import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -18,7 +16,7 @@ public class MyFrame {
 
     public JTextArea jTextArea;
     public JScrollPane scroll;
-    public ExecutorService executorService = Executors.newFixedThreadPool(1);
+    public ExecutorService executorService = Executors.newFixedThreadPool(2);
 
     public void start() {
         JFrame jf = new JFrame("JiraIssue提取器");          // 创建窗口

@@ -39,27 +39,6 @@ public class IssueHandler {
         this.myFrame = myFrame;
     }
 
-    public void insertIssuesByProject(String projectKey){
-        int issueCount = issueAPI.getIssueCount(projectKey);
-        myFrame.addJTextAreaInfo(projectKey+"的issue数量为"+issueCount+"个...");
-        myFrame.addJTextAreaInfo("正在获取"+projectKey+"的issue...");
-        for (int i=0;i<issueCount;i+=1000) {
-            issues.addAll(issueAPI.getIssues(projectKey, i, 1000));
-        }
-        int n=1;
-        for (Issue issue:issues){
-            getIssueInfo(issue);
-            if(n%10==0) {
-                myFrame.addJTextAreaInfo(projectKey + "已获取" + n + "个issue...");
-            }
-            n++;
-        }
-        myFrame.addJTextAreaInfo(projectKey+"的issue获取完成...");
-        myFrame.addJTextAreaInfo(projectKey+"的issue正在插入mysql...");
-        insertIssueInfo();
-        myFrame.addJTextAreaInfo(projectKey+"的全部issue及其信息插入完成!");
-    }
-
     public void insertIssuesByCount(String jql, int startAt, int issueCount){
         if("".equals(jql)||jql==null){
             jql = "all";
@@ -77,7 +56,7 @@ public class IssueHandler {
         }
         myFrame.addJTextAreaInfo("要获取的issue数量为"+issueCount+"个...");
         myFrame.addJTextAreaInfo("正在获取issue...");
-        int onceIssueCount = 500;
+        int onceIssueCount = 200;
         int n=0;
         long stime = System.currentTimeMillis();
         for (int i=0;i<issueCount;i+=onceIssueCount) {
@@ -90,9 +69,9 @@ public class IssueHandler {
                 }
                 long etime = System.currentTimeMillis();
                 if((etime-stime)/60000>60){
-                    myFrame.addJTextAreaInfo("已运行1小时，防止被锁IP，现暂停一小时...");
+                    myFrame.addJTextAreaInfo("暂停一会...");
                     try {
-                        Thread.sleep(1000*60*60);
+                        Thread.sleep(1000*60*180);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -111,7 +90,7 @@ public class IssueHandler {
 
     private void getIssueInfo(Issue issue){
         String issueKey = issue.getKey();
-        System.out.println(issueKey);
+        //System.out.println(issueKey);
 
         if(issue.getAssignee()!=null) {
             users.add(issue.getAssignee());
@@ -122,7 +101,6 @@ public class IssueHandler {
         if(issue.getReporter()!=null) {
             users.add(issue.getReporter());
         }
-
         //List<User> issueWatchers = watcherAPI.getWatchers(issueKey);
         //List<User> issueVoters = voteAPI.getVoters(issueKey);
         List<RemoteLink> issueRemoteLinks = remoteLinkAPI.getRemoteLinks(issueKey);
@@ -141,7 +119,9 @@ public class IssueHandler {
         issue.setComments(issueComments);
         issue.setWorklog(issueWorkLogs);
 
-        attachments.addAll(issue.getAttachment());
+        if(issue.getAttachment()!=null) {
+            attachments.addAll(issue.getAttachment());
+        }
         issueLinks.addAll(issueLinkAPI.getIssueLinks(issue.getIssueLinks()));
         histories.addAll(issue.getHistories());
         List<Object> list = ParseUtil.parseTransitionList(issue);
@@ -151,16 +131,36 @@ public class IssueHandler {
 
     private void insertIssueInfo() {
         try {
-            new IssueDao().insertIssues(issues);
-            new UserDao().insertUsers(users);
-            new AttachmentDao().insertAttachments(attachments);
-            new IssueLinkDao().insertIssueLinks(issueLinks);
-            new RemoteLinkDao().insertRemoteLinks(remoteLinks);
-            new CommentDao().insertComments(comments);
-            new WorkLogDao().insertWorkLogs(workLogs);
-            new HistoryDao().insertHistories(histories);
-            new TransitionDao().insertTransitions(transitions);
-            new PriorityChangedDao().insertPriorityChangeds(priorityChangeds);
+            if(!issues.isEmpty()) {
+                new IssueDao().insertIssues(issues);
+            }
+            if(!users.isEmpty()) {
+                new UserDao().insertUsers(users);
+            }
+            if(!attachments.isEmpty()) {
+                new AttachmentDao().insertAttachments(attachments);
+            }
+            if(!issueLinks.isEmpty()) {
+                new IssueLinkDao().insertIssueLinks(issueLinks);
+            }
+            if(!remoteLinks.isEmpty()) {
+                new RemoteLinkDao().insertRemoteLinks(remoteLinks);
+            }
+            if(!comments.isEmpty()) {
+                new CommentDao().insertComments(comments);
+            }
+            if(!workLogs.isEmpty()) {
+                new WorkLogDao().insertWorkLogs(workLogs);
+            }
+            if(!histories.isEmpty()) {
+                new HistoryDao().insertHistories(histories);
+            }
+            if(!transitions.isEmpty()) {
+                new TransitionDao().insertTransitions(transitions);
+            }
+            if(!priorityChangeds.isEmpty()) {
+                new PriorityChangedDao().insertPriorityChangeds(priorityChangeds);
+            }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }

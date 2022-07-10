@@ -12,7 +12,7 @@ import java.util.List;
 public class RemoteLinkDao {
     public void insertRemoteLinks(List<RemoteLink> remoteLinks) throws SQLException {
         DruidPooledConnection conn = Database.getConnection();
-        String sql="replace into remotelink values(?,?,?,?,?)";
+        String sql="insert ignore into remotelink values(?,?,?,?,?)";
         PreparedStatement pstmt = conn.prepareStatement(sql);
         for(RemoteLink remoteLink:remoteLinks){
             pstmt.setObject(1,remoteLink.getId());

@@ -11,7 +11,7 @@ import java.util.List;
 public class PriorityChangedDao {
     public void insertPriorityChangeds(List<PriorityChanged> priorityChangeds) throws SQLException {
         DruidPooledConnection conn = Database.getConnection();
-        String sql="replace into prioritychanged values(?,?,?,?,?)";
+        String sql="insert ignore into prioritychanged values(?,?,?,?,?)";
         PreparedStatement pstmt = conn.prepareStatement(sql);
         for(PriorityChanged priorityChanged:priorityChangeds){
             pstmt.setObject(1,priorityChanged.getAuthorDisplayName());

@@ -16,4 +16,5 @@ public class Component{
     private String project;
     private long projectId;
     private boolean archived;
+
 }

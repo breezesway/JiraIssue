@@ -12,4 +12,5 @@ public class RemoteLink {
     private String remoteObjectTitle;
     //private Object remoteObjectIcon;  //不清楚该字段类型
     //private Object remoteObjectStatus;    //不清楚该字段类型
+
 }

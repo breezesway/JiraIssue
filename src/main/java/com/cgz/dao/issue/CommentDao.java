@@ -12,7 +12,7 @@ import java.util.List;
 public class CommentDao {
     public void insertComments(List<Comment> comments) throws SQLException {
         DruidPooledConnection conn = Database.getConnection();
-        String sql="replace into comment values(?,?,?,?,?,?,?,?)";
+        String sql="insert ignore into comment values(?,?,?,?,?,?,?,?)";
         PreparedStatement pstmt = conn.prepareStatement(sql);
         for(Comment comment:comments){
             pstmt.setObject(1,comment.getId());

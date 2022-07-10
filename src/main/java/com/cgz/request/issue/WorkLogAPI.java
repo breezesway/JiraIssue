@@ -19,7 +19,6 @@ public class WorkLogAPI {
         } catch (UnirestException e) {
             e.printStackTrace();
         }
-
         List<WorkLog> worklogs = JSONObject.parseObject(body).getJSONArray("worklogs").toJavaList(WorkLog.class);
         for (WorkLog workLog:worklogs){
             workLog.setIssueKey(issueKey);

@@ -10,4 +10,5 @@ public class IssueLink {
     private IssueLinkType type;
     private String inwardIssueKey;
     private String outwardIssueKey;
+
 }

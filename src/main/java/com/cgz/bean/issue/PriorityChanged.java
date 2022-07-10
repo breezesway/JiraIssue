@@ -9,4 +9,5 @@ public class PriorityChanged {
     private String issueKey;
     private String fromString;
     private String toString;
+
 }

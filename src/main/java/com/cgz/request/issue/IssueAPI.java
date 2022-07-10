@@ -3,6 +3,7 @@ package com.cgz.request.issue;
 import com.alibaba.fastjson.JSONObject;
 import com.cgz.bean.issue.Issue;
 import com.cgz.util.ParseUtil;
+import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
@@ -36,16 +37,26 @@ public class IssueAPI {
         parameters.put("startAt",startAt);
         parameters.put("maxResults",maxResults);
         parameters.put("expand","changelog");
-        String body = null;
+        String body;
+        HttpResponse<String> response = null;
         try {
-            body = Unirest.get(url)
+            response = Unirest.get(url)
                     .header("Accept", "application/json")
                     .queryString(parameters)
-                    .asString()
-                    .getBody();
+                    .asString();
         } catch (UnirestException e) {
             e.printStackTrace();
         }
+        while (response.getStatus()==401){
+            try {
+                response = Unirest.get(url)
+                        .header("Accept", "application/json")
+                        .asString();
+            } catch (UnirestException e) {
+                e.printStackTrace();
+            }
+        }
+        body = response.getBody();
         return ParseUtil.parseIssueList(JSONObject.parseObject(body).getJSONArray("issues"));
     }
 

@@ -23,7 +23,7 @@ public class ParseUtil {
         issue.setResolutionDate((String) fields.get("resolutiondate"));
         issue.setCreated((String) fields.get("created"));
         issue.setUpdated((String) fields.get("updated"));
-        issue.setWorkRatio(((Integer) fields.get("workratio")).floatValue());
+        issue.setWorkRatio(fields.getIntValue("workratio"));
         issue.setSummary((String) fields.get("summary"));
         issue.setDescription((String) fields.get("description"));
         issue.setEnvironment((String) fields.get("environment"));
@@ -73,13 +73,16 @@ public class ParseUtil {
         issue.setTimetracking(timeTracking);
 
         ArrayList<String> labels = new ArrayList<>();
-        for (Object object:fields.getJSONArray("labels")){
-            labels.add((String) object);
+        if(fields.containsKey("labels")) {
+            for (Object object : fields.getJSONArray("labels")) {
+                labels.add((String) object);
+            }
+            issue.setLabels(labels);
         }
-        issue.setLabels(labels);
-        issue.setFixVersions(fields.getJSONArray("fixVersions").toJavaList(Version.class));
-        issue.setVersions(fields.getJSONArray("versions").toJavaList(Version.class));
-        issue.setComponents(fields.getJSONArray("components").toJavaList(Component.class));
+
+        issue.setFixVersions(fields.containsKey("fixVersions")?fields.getJSONArray("fixVersions").toJavaList(Version.class):null);
+        issue.setVersions(fields.containsKey("versions")?fields.getJSONArray("versions").toJavaList(Version.class):null);
+        issue.setComponents(fields.containsKey("components")?fields.getJSONArray("components").toJavaList(Component.class):null);
         issue.setAttachment(fields.containsKey("attachment")?fields.getJSONArray("attachment").toJavaList(Attachment.class):null);
 
         JSONArray jsonArray1 = fields.getJSONArray("subtasks");

@@ -9,4 +9,5 @@ public class StatusCategory {
     private String name;
     private String colorName;
     private String self;
+
 }
