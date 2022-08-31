@@ -1,31 +1,18 @@
 package com.cgz.request.issue;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.cgz.bean.issue.Issue;
 import com.cgz.util.ParseUtil;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
+import com.mashape.unirest.request.HttpRequest;
 
 import java.util.HashMap;
 import java.util.List;
 
 public class IssueAPI {
-    public Issue getIssue(String issueKey){
-        String url="https://issues.apache.org/jira/rest/api/2/issue/";
-        String body = null;
-        try {
-            body = Unirest.get(url+issueKey)
-                    .header("Accept", "application/json")
-                    .queryString("expand","changelog")
-                    .asString()
-                    .getBody();
-        } catch (UnirestException e) {
-            e.printStackTrace();
-        }
-
-        return ParseUtil.parseIssue(body);
-    }
 
     public List<Issue> getIssues(String jql,int startAt,int maxResults){
         String url="https://issues.apache.org/jira/rest/api/2/search";
@@ -39,25 +26,22 @@ public class IssueAPI {
         parameters.put("expand","changelog");
         String body;
         HttpResponse<String> response = null;
-        try {
-            response = Unirest.get(url)
-                    .header("Accept", "application/json")
-                    .queryString(parameters)
-                    .asString();
-        } catch (UnirestException e) {
-            e.printStackTrace();
-        }
-        while (response.getStatus()==401){
+        int status = 401;
+        while (status == 401){
             try {
                 response = Unirest.get(url)
                         .header("Accept", "application/json")
+                        .basicAuth("ScanArr","angm13y4-$")
+                        .queryString(parameters)
                         .asString();
+                status = response.getStatus();
             } catch (UnirestException e) {
                 e.printStackTrace();
             }
         }
         body = response.getBody();
-        return ParseUtil.parseIssueList(JSONObject.parseObject(body).getJSONArray("issues"));
+        JSONArray jsonArray = JSONObject.parseObject(body).getJSONArray("issues");
+        return ParseUtil.parseIssueList(jsonArray);
     }
 
     public int getIssueCount(String jql){
@@ -70,15 +54,16 @@ public class IssueAPI {
         parameters.put("maxResults",1);
         String body = null;
         try {
-            body = Unirest.get(url)
+            HttpRequest request = Unirest.get(url)
                     .header("Accept", "application/json")
-                    .queryString(parameters)
+                    .basicAuth("ScanArr","angm13y4-$")
+                    .queryString(parameters);
+            body = request
                     .asString()
                     .getBody();
         } catch (UnirestException e) {
             e.printStackTrace();
         }
-        int total = JSONObject.parseObject(body).getIntValue("total");
-        return total;
+        return JSONObject.parseObject(body).getIntValue("total");
     }
 }

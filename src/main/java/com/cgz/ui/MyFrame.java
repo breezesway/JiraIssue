@@ -132,7 +132,7 @@ public class MyFrame {
             JOptionPane.showMessageDialog(jf,issueCount,"issue数量",JOptionPane.INFORMATION_MESSAGE);
         });
         issueBtn.addActionListener(e -> {
-            int startAt=0;
+            int startAt=-1;
             if(!(textIsNull(startAtJTextField))){
                 startAt = Integer.parseInt(startAtJTextField.getText());
             }

@@ -44,7 +44,7 @@ public class IssueHandler {
             jql = "all";
         }
         BreakPointDao breakPointDao = new BreakPointDao();
-        if (startAt==0){
+        if (startAt==-1){
             try {
                 startAt = breakPointDao.getLastBreakPoint(jql);
             } catch (SQLException throwables) {
@@ -68,15 +68,16 @@ public class IssueHandler {
                     myFrame.addJTextAreaInfo("已获取" + n + "个issue...");
                 }
                 long etime = System.currentTimeMillis();
-                if((etime-stime)/60000>60){
-                    myFrame.addJTextAreaInfo("暂停一会...");
+                if((etime-stime)/60000>180){
+                    return;
+                    /*myFrame.addJTextAreaInfo("暂停一会...");
                     try {
                         Thread.sleep(1000*60*180);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
                     myFrame.addJTextAreaInfo("继续获取...");
-                    stime = System.currentTimeMillis();
+                    stime = System.currentTimeMillis();*/
                 }
             }
             myFrame.addJTextAreaInfo("已获取" + n + "个issue...");
