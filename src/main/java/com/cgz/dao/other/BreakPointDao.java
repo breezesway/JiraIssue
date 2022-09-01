@@ -1,4 +1,4 @@
-package com.cgz.dao.breakpoint;
+package com.cgz.dao.other;
 
 import com.alibaba.druid.pool.DruidPooledConnection;
 import com.cgz.dao.Database;

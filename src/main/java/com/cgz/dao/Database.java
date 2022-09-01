@@ -2,22 +2,35 @@ package com.cgz.dao;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.druid.pool.DruidPooledConnection;
+import com.cgz.dao.other.DBDao;
 
 import java.sql.SQLException;
 
 public class Database {
 
-    public static String databaseName = "jira";
+    private static String databaseName = null;
+    private static String username = "root";
+    private static String password = "123456";
 
     private static DruidDataSource dataSource;
 
     static {
+        initDataSource("jira");
+    }
+
+    public static DruidPooledConnection getConnection() throws SQLException {
+        //获取连接
+        return dataSource.getConnection();
+    }
+
+    public static void initDataSource(String dbName){
+        databaseName = dbName;
         //数据源配置
         dataSource = new DruidDataSource();
         dataSource.setUrl("jdbc:mysql://127.0.0.1/"+databaseName+"?serverTimezone=UTC&rewriteBatchedStatements=true");
         dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver"); //这个可以缺省的，会根据url自动识别
-        dataSource.setUsername("root");
-        dataSource.setPassword("123456");
+        dataSource.setUsername(username);
+        dataSource.setPassword(password);
 
         //下面都是可选的配置
         //dataSource.setInitialSize(10);  //初始连接数，默认0
@@ -28,9 +41,20 @@ public class Database {
         dataSource.setMaxOpenPreparedStatements(20); //缓存PreparedStatement的最大数量，默认-1（不缓存）。大于0时会自动开启缓存PreparedStatement，所以可以省略上一句代码
     }
 
-    public static DruidPooledConnection getConnection() throws SQLException {
-        //获取连接
-        return dataSource.getConnection();
+    public static void changeDataSource(String dbName){
+        dataSource.close();
+        dataSource = null;
+        initDataSource(dbName);
+    }
+
+
+    public static String getDatabaseName(){
+        try {
+            getConnection();
+            return databaseName;
+        }catch (SQLException throwables) {
+            return null;
+        }
     }
 
 }

@@ -2,7 +2,7 @@ package com.cgz.handler;
 
 import com.cgz.bean.issue.*;
 import com.cgz.bean.user.User;
-import com.cgz.dao.breakpoint.BreakPointDao;
+import com.cgz.dao.other.BreakPointDao;
 import com.cgz.dao.issue.*;
 import com.cgz.dao.user.UserDao;
 import com.cgz.request.issue.*;
